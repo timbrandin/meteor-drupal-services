@@ -50,7 +50,7 @@ Which you create yourself in the Services UI.
 
 Some typical service call looks like this, they are called from the server and it is currently synchronous, but you could put it in a fiber or use unblock to send them async I guess.
 
-```
+```js
 if (Meteor.isServer) {
   // Fetch nodes with node-id 1 and 2.
   var nodes = DrupalService.index('api', 'node', {
