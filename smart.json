@@ -1,9 +1,9 @@
 {
   "name": "drupal-services",
   "description": "An integration with the Drupal Services module",
-  "homepage": "",
+  "homepage": "https://github.com/timbrandin/meteor-drupal-services",
   "author": "Tim Brandin <tim.brandin@gmail.com> (http://timbrandin.com)",
-  "version": "0.0.1",
-  "git": "",
+  "version": "0.0.2",
+  "git": "https://github.com/timbrandin/meteor-drupal-services.git",
   "packages": {}
 }
