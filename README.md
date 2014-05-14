@@ -25,7 +25,7 @@ A plus with the OAuth Login Provider is that it also gives us "OAuth Login" whic
 Install
 -----------
 ```
-mrt install accounts-drupal
+mrt install drupal-services
 ```
 
 ```mrt``` is a Meteorite command line tool. Visit [Meteorite's page](http://oortcloud.github.com/meteorite/) to learn more.
