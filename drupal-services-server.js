@@ -97,8 +97,11 @@ DrupalServices = (function() {
 
   return {
     getRequestToken: function() {
-      var requestToken = tokens.findOne({type: 'request'});
-      if (true || !requestToken || requestToken.expire < +new Date) {
+      var config = ServiceConfiguration.configurations.findOne({service: 'drupal'});
+      if (!config)
+        throw new ServiceConfiguration.ConfigError("Service not configured");
+
+      if (!config.requestToken || config.requestToken.expire < +new Date) {
         var responseContent;
         try {
 
@@ -110,34 +113,42 @@ DrupalServices = (function() {
         }
 
         // Success!! Extract request token.
-        requestToken = querystring.parse(responseContent);
-        _.extend(requestToken, {
+        config.requestToken = querystring.parse(responseContent);
+        _.extend(config.requestToken, {
+          oauth_token_secret: OAuth.sealSecret(config.requestToken.oauth_token_secret),
           expire: (+new Date) + 3600,
           type: 'request'
         });
 
-        // Store the request token for later use.
-        tokens.upsert({type: 'request'}, requestToken);
+        // Store the request token in the ServiceConfiguration.
+        ServiceConfiguration.configurations.update({service: 'drupal'}, {$set: {
+            requestToken: config.requestToken,
+          }
+        });
 
-        if (!requestToken) {
+        if (!config.requestToken) {
           throw new Error("Failed to complete OAuth handshake with the Drupal Service " +
             "-- can't find request token in HTTP response. " + responseContent);
         }
       }
 
-      return _.omit(requestToken, '_id');
+      return config.requestToken;
     },
 
     getAccessToken: function () {
-      var accessToken = tokens.findOne({type: 'access'});
-      if (!accessToken || accessToken.expire < +new Date) {
-        var requestToken = tokens.findOne({type: 'request'});
+      var config = ServiceConfiguration.configurations.findOne({service: 'drupal'});
+      if (!config)
+        throw new ServiceConfiguration.ConfigError("Service not configured");
 
+      if (!config.requestToken)
+        throw new ServiceConfiguration.ConfigError("Could not find any request-token for the service.");
+
+      if (!config.accessToken || config.accessToken.expire < +new Date) {
         var responseContent;
         try {
 
           responseContent = SignedHTTP.post('/oauth/access_token', {
-            key: requestToken
+            key: config.requestToken
           }).content;
 
         } catch (err) {
@@ -145,22 +156,26 @@ DrupalServices = (function() {
         }
 
         // Success! Extract access token.
-        accessToken = querystring.parse(responseContent);
-        _.extend(accessToken, {
+        config.accessToken = querystring.parse(responseContent);
+        _.extend(config.accessToken, {
+          oauth_token_secret: OAuth.sealSecret(config.accessToken.oauth_token_secret),
           expire: (+new Date) + 3600,
           type: 'access'
         });
 
-        // Store the access token for later use.
-        tokens.upsert({type: 'access'}, accessToken);
+        // Store the access token in the ServiceConfiguration.
+        ServiceConfiguration.configurations.update({service: 'drupal'}, {$set: {
+            accessToken: config.accessToken,
+          }
+        });
 
-        if (!accessToken) {
+        if (!config.accessToken) {
           throw new Error("Failed to complete OAuth handshake with the Drupal Service " +
             "-- can't find access token in HTTP response. " + responseContent);
         }
       }
 
-      return _.omit(accessToken, '_id');
+      return config.accessToken;
     },
 
     getIdentity: function (accessToken) {
@@ -183,17 +198,28 @@ DrupalServices = (function() {
       return JSON.parse(responseContent);
     },
 
-    isAuthorized: function() {
-      return tokens.findOne({type: 'access'}) != null;
+    isConfigured: function() {
+      var config = ServiceConfiguration.configurations.findOne({service: 'drupal'});
+      return config;
     },
 
-    retreive: function(endpoint, resource, params) {
-      var accessToken = tokens.findOne({type: 'access'});
+    isAuthorized: function() {
+      return ServiceConfiguration.configurations.findOne({accessToken: {$exists: true}}) != null;
+    },
+
+    get: function(endpoint, resource, params) {
+      var config = ServiceConfiguration.configurations.findOne({service: 'drupal'});
+      if (!config)
+        throw new ServiceConfiguration.ConfigError("Service not configured");
+
+      if (!config.accessToken)
+        throw new ServiceConfiguration.ConfigError("Could not find any access-token for the service.");
+
       var responseContent;
       try {
 
         responseContent = SignedHTTP.get('/' + endpoint + '/' + resource, {
-          key: accessToken,
+          key: config.accessToken,
           params: params
         }).content;
 
@@ -210,13 +236,19 @@ DrupalServices = (function() {
     },
 
     create: function(endpoint, resource) {
-      var accessToken = tokens.findOne({type: 'access'});
+      var config = ServiceConfiguration.configurations.findOne({service: 'drupal'});
+      if (!config)
+        throw new ServiceConfiguration.ConfigError("Service not configured");
+
+      if (!config.accessToken)
+        throw new ServiceConfiguration.ConfigError("Could not find any access-token for the service.");
+
       var responseContent;
       try {
 
-        responseContent = SignedHTTP.post('/' + config.endpoint + '/' + resource, {
-          key: accessToken
-        }).content;
+        responseContent = SignedHTTP.post('/' + endpoint + '/' + resource, _.extend(params, {
+          key: config.accessToken
+        })).content;
 
       } catch (err) {
         throw new Error("Failed to complete OAuth handshake with the Drupal Service. " + err.message);
@@ -235,8 +267,9 @@ DrupalServices = (function() {
       var responseContent;
       try {
 
-        responseContent = SignedHTTP.put('/' + endpoint + '/' + resource, {
-          key: accessToken
+        responseContent = SignedHTTP.del('/' + endpoint + '/' + resource, {
+          key: accessToken,
+          content: {}
         }).content;
 
       } catch (err) {
