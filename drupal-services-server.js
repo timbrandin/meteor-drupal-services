@@ -60,10 +60,8 @@ DrupalServices = (function() {
       params: _.extend(params, {oauth_signature: oauth_signature})
     });
 
-    // Pass along to Meteor.http.
-    return Meteor.http[methodNames[method]](config.server + path, {
-      params: _.extend(params, {oauth_signature: oauth_signature})
-    }, callback);
+    // Pass along to HTTP.
+    return HTTP[methodNames[method]](config.server + path, options, callback);
   };
 
   SignedHTTP = {};
