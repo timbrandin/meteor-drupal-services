@@ -19,9 +19,3 @@ Package.on_use(function (api, where) {
 
   api.export('DrupalServices');
 });
-
-// Package.on_test(function (api) {
-//   api.use('drupal-services');
-//
-//   api.add_files('drupal-services_tests.js', ['client', 'server']);
-// });
