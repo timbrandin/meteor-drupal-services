@@ -344,6 +344,34 @@ DrupalServices = (function() {
 
       return JSON.parse(responseContent);
     },
+
+    action: function(endpoint, resource, params) {
+      var config = ServiceConfiguration.configurations.findOne({service: 'drupal'});
+      if (!config)
+        throw new ServiceConfiguration.ConfigError("Service not configured");
+
+      if (!config.accessToken)
+        throw new ServiceConfiguration.ConfigError("Could not find any access-token for the service.");
+
+      var responseContent;
+      try {
+
+        responseContent = SignedHTTP.post('/' + endpoint + '/' + resource, {
+          key: config.accessToken,
+          params: params
+        }).content;
+
+      } catch (err) {
+        throw new Error("Failed to complete OAuth handshake with the Drupal Service. " + err.message);
+      }
+
+      // If 'responseContent' does not parse as JSON, it is an error.
+      if (!isJSON(responseContent)) {
+        throw new Error("Failed to complete OAuth handshake with the Drupal Service. " + responseContent);
+      }
+
+      return JSON.parse(responseContent);
+    }
   };
 })();
 
