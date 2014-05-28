@@ -318,12 +318,18 @@ DrupalServices = (function() {
     },
 
     index: function(endpoint, resource, params) {
-      var accessToken = tokens.findOne({type: 'access'});
+      var config = ServiceConfiguration.configurations.findOne({service: 'drupal'});
+      if (!config)
+        throw new ServiceConfiguration.ConfigError("Service not configured");
+
+      if (!config.accessToken)
+        throw new ServiceConfiguration.ConfigError("Could not find any access-token for the service.");
+
       var responseContent;
       try {
 
         responseContent = SignedHTTP.get('/' + endpoint + '/' + resource, {
-          key: accessToken,
+          key: config.accessToken,
           params: params
         }).content;
 
