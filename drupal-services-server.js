@@ -235,7 +235,7 @@ DrupalServices = (function() {
       return JSON.parse(responseContent);
     },
 
-    create: function(endpoint, resource) {
+    create: function(endpoint, resource, params) {
       var config = ServiceConfiguration.configurations.findOne({service: 'drupal'});
       if (!config)
         throw new ServiceConfiguration.ConfigError("Service not configured");
@@ -262,15 +262,20 @@ DrupalServices = (function() {
       return JSON.parse(responseContent);
     },
 
-    update: function(endpoint, resource) {
-      var accessToken = tokens.findOne({type: 'access'});
+    update: function(endpoint, resource, params) {
+      var config = ServiceConfiguration.configurations.findOne({service: 'drupal'});
+      if (!config)
+        throw new ServiceConfiguration.ConfigError("Service not configured");
+
+      if (!config.accessToken)
+        throw new ServiceConfiguration.ConfigError("Could not find any access-token for the service.");
+
       var responseContent;
       try {
 
-        responseContent = SignedHTTP.del('/' + endpoint + '/' + resource, {
-          key: accessToken,
-          content: {}
-        }).content;
+        responseContent = SignedHTTP.put('/' + endpoint + '/' + resource, _.extend(params, {
+          key: config.accessToken
+        })).content;
 
       } catch (err) {
         throw new Error("Failed to complete OAuth handshake with the Drupal Service. " + err.message);
@@ -285,12 +290,18 @@ DrupalServices = (function() {
     },
 
     del: function(endpoint, resource) {
-      var accessToken = tokens.findOne({type: 'access'});
+      var config = ServiceConfiguration.configurations.findOne({service: 'drupal'});
+      if (!config)
+        throw new ServiceConfiguration.ConfigError("Service not configured");
+
+      if (!config.accessToken)
+        throw new ServiceConfiguration.ConfigError("Could not find any access-token for the service.");
+
       var responseContent;
       try {
 
         responseContent = SignedHTTP.del('/' + endpoint + '/' + resource, {
-          key: accessToken,
+          key: config.accessToken,
           content: {}
         }).content;
 
