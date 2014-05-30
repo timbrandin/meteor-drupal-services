@@ -1,4 +1,4 @@
-meteor-drupal-services
+Drupal Services [![Build Status](https://travis-ci.org/EventedMind/iron-router.png)](https://travis-ci.org/EventedMind/iron-router)
 ============================
 
 A meteor package for integration with [Drupal](http://drupal.org) via the [Services](https://drupal.org/project/services) module, and authenticating using
