@@ -65,7 +65,7 @@ Features
 -----------------
 
 * **OAuth 3-step login procedure** to any Drupal site with Drupal OAuth configured.
-* **Signed (HMAC-SHA256) requests** to configured services in the Services module in any Drupal site.
+* **Signed (HMAC-SHA256) requests** to a configured services in the Services module in any Drupal site.
 
 #### What's next, in a very near future
 
