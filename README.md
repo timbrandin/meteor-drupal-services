@@ -9,7 +9,6 @@ Package Dependencies
 
 * accounts-base
 * accounts-oauth
-* drupal-services
 
 Drupal Dependencies
 ----------------------
