@@ -78,7 +78,9 @@ Feel free to fork, send pull requests and post issues on Github.
 
 * Refactoring the package into two new packages where on is using OAuth1Binding.
 * Using the package to access open resources without any authorization.
+* Configurable authorization.
 * Multiple services, connecting to multiple Drupal sites.
+* Drupal Sync module that keeps a collection in sync with a configured resource.
 * Drupal 8 integration.
 
 #### This package also works great with these modules
