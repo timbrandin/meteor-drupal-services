@@ -74,7 +74,7 @@ Features
 
 #### Roadmap
 
-Feel free to fork, send pull requests and posting issues.
+Feel free to fork, send pull requests and post issues on Github.
 
 * Refactoring the package into two new packages where on is using OAuth1Binding.
 * Using the package to access open resources without any authorization.
