@@ -52,15 +52,12 @@ Some typical service call looks like this, they are called from the server and i
 ```js
 if (Meteor.isServer) {
   // Fetch nodes with node-id 1 and 2.
-  var nodes = DrupalService.index('api', 'node', {
+  var nodes = DrupalService.get('api', 'node', {
     'parameters[nid]': '1,2'
   });
-  // Printing the nodes to the console (terminal/bash/prompt).
-  console.log(nodes);
 
   // Fetch node 1 with all its fields.
-  var node = DrupalServices.retreive('api', 'node/1');
-  console.log(node);
+  var node = DrupalServices.get('api', 'node/1');
 }
 ```
 
