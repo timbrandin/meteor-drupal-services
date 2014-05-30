@@ -64,23 +64,22 @@ if (Meteor.isServer) {
 Features
 -----------------
 
-* **Login to your Drupal site** where your site works as an OAuth Provider, just like Twitter, Facebook, Instagram etc. where users can authorize external applications such as Meteor to fetch data provided by your configured services.
-* **Signed (HMAC-SHA256) requests** with OAuth 3-step login procedure, currently only to retreive and index resources in your services.
+* **OAuth 3-step login procedure** to any Drupal site with Drupal OAuth configured.
+* **Signed (HMAC-SHA256) requests** to configured services in the Services module in any Drupal site.
 
 #### What's next, in a very near future
 
-* Signed HTTP POST with parameters and data.
-* Signed HTTP PUT with parameters and data.
 * Improved error messages.
 * Better documentation.
 
-#### Possible future improvements
+#### Roadmap
 
 Feel free to fork, send pull requests and posting issues.
 
+* Refactoring the package into two new packages where on is using OAuth1Binding.
 * Using the package to access open resources without any authorization.
-* Drupal 8 integration.
 * Multiple services, connecting to multiple Drupal sites.
+* Drupal 8 integration.
 
 #### This package also works great with these modules
 
