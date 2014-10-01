@@ -9,12 +9,16 @@ DrupalServices = function() {
           '?oauth_consumer_key=' + config.consumerKey +
           '&oauth_token=' + credentialToken +
           '&oauth_callback=' + encodeURIComponent(Meteor.absoluteUrl('_oauth/drupal?close'));
-    try {
-      Oauth.initiateLogin(credentialToken, loginUrl, credentialRequestCompleteCallback);
-    }
-    catch(e) {
-      // OAuth trows an error on newwindow.focus in iOS, it should still work.
-    }
+
+    var loginStyle = OAuth._loginStyle('drupal', config, options);
+
+    Oauth.launchlogin({
+      loginService: "drupal",
+      loginStyle: loginStyle,
+      loginUrl: loginUrl,
+      credentialRequestCompleteCallback: credentialRequestCompleteCallback,
+      credentialToken: credentialToken
+    });
   };
 
   return {
