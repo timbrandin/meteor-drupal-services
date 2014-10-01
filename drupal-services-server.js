@@ -67,7 +67,7 @@ DrupalServices = (function() {
   SignedHTTP = {};
 
   // Wrap for asyncronous calls to enable syncronous requests.
-  SignedHTTP.call = Meteor._wrapAsync(_call);
+  SignedHTTP.call = Meteor.wrapAsync(_call);
 
   SignedHTTP.get = function() {
     return SignedHTTP.call.apply(this, _.union(['GET'], arguments));
