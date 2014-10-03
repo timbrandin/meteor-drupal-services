@@ -12,7 +12,7 @@ DrupalServices = function() {
 
     var loginStyle = OAuth._loginStyle('drupal', config, options);
 
-    Oauth.launchlogin({
+    OAuth.launchlogin({
       loginService: "drupal",
       loginStyle: loginStyle,
       loginUrl: loginUrl,
