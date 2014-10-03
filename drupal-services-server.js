@@ -472,9 +472,6 @@ function buildState(loginStyle, credentialToken) {
 }
 
 function createOAuthBindings(server, urls) {
-
-  console.log('resistered', urls);
-
   OAuth.registerService('drupal', 1, urls, function(oauthBinding) {
     var identity = oauthBinding.post(server + '/oauthlogin/api/login/info').data;
 
@@ -487,8 +484,6 @@ function createOAuthBindings(server, urls) {
 
     var fields = _.pick(identity, whitelisted);
     _.extend(serviceData, fields);
-
-    console.log(identity);
 
     return {
       serviceData: serviceData,
