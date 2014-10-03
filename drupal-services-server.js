@@ -383,55 +383,120 @@ Meteor.methods({
   }
 });
 
-// Register the Drupal service and use our "drupal" request handler below.
-Oauth.registerService('drupal', 'drupal', null, function(query) {
-  var accessToken = DrupalServices.getAccessToken();
-  var identity = DrupalServices.getIdentity(accessToken);
+// // Register the Drupal service and use our "drupal" request handler below.
+// Oauth.registerService('drupal', 'drupal', null, function(query) {
+//   var accessToken = DrupalServices.getAccessToken();
+//   var identity = DrupalServices.getIdentity(accessToken);
+//
+//   var serviceData = {
+//     id: identity.uid
+//   };
+//
+//   // Include all whitelisted fields from Drupal.
+//   var whitelisted = [];
+//
+//   var fields = _.pick(identity, whitelisted);
+//   _.extend(serviceData, fields);
+//
+//   return {
+//     serviceData: serviceData,
+//     options: {
+//       profile: {
+//         name: identity.name
+//       }
+//     }
+//   };
+// });
+//
+// // This is a recreation of the OAuth request handler from the oauth2 package.
+// // connect middleware
+// OAuth._requestHandlers['drupal'] = function (service, query, res) {
+//   // check if user authorized access
+//   if (!query.error) {
+//     // Prepare the login results before returning.
+//
+//     // Because Drupal doesn't return state or anything, we have to create it.
+//     _.extend(query, {state: query.oauth_token});
+//
+//     // Run service-specific handler.
+//     var oauthResult = service.handleOauthRequest(query);
+//     var credentialSecret = Random.secret();
+//
+//     // Store the login result so it can be retrieved in another
+//     // browser tab by the result handler
+//     OAuth._storePendingCredential(query.state, {
+//       serviceName: service.serviceName,
+//       serviceData: oauthResult.serviceData,
+//       options: oauthResult.options
+//     }, credentialSecret);
+//   }
+//
+//   // Either close the window, redirect, or render nothing
+//   // if all else fails
+//   OAuth._renderOauthResults(res, query, credentialSecret);
+// };
 
-  var serviceData = {
-    id: identity.uid
-  };
+var url = Npm.require("url");
 
-  // Include all whitelisted fields from Drupal.
-  var whitelisted = [];
-
-  var fields = _.pick(identity, whitelisted);
-  _.extend(serviceData, fields);
-
-  return {
-    serviceData: serviceData,
-    options: {
-      profile: {
-        name: identity.name
-      }
+Meteor.startup(function() {
+  var drupalServiceCursor = ServiceConfiguration.configurations.find({service: 'drupal'});
+  drupalServiceCursor.observe({
+    added: function(service) {
+      // Remove trailing slashes.
+      var server = service.server.replace(/\/$/, '');
+      var urls = {
+        requestToken: server + '/oauth/request_token',
+        authorize: server + '/oauth/authorize',
+        accessToken: server + '/oauth/access_token',
+        authenticate: server + '/oauth/authorize'
+      };
+      createOAuthBindings(server, urls);
     }
-  };
+  });
 });
 
-// This is a recreation of the OAuth request handler from the oauth2 package.
-// connect middleware
-OAuth._requestHandlers['drupal'] = function (service, query, res) {
-  // check if user authorized access
-  if (!query.error) {
-    // Prepare the login results before returning.
+function buildState(loginStyle, credentialToken) {
+  var state = {
+    loginStyle: loginStyle,
+    credentialToken: credentialToken,
+    isCordova: Meteor.isCordova
+  };
 
-    // Because Drupal doesn't return state or anything, we have to create it.
-    _.extend(query, {state: query.oauth_token});
+  if (loginStyle === 'redirect')
+    state.redirectUrl = '' + window.location;
 
-    // Run service-specific handler.
-    var oauthResult = service.handleOauthRequest(query);
-    var credentialSecret = Random.secret();
+  // Encode base64 as not all login services URI-encode the state
+  // parameter when they pass it back to us.
+  // Use the 'base64' package here because 'btoa' isn't supported in IE8/9.
+  return Base64.encode(JSON.stringify(state));
+}
 
-    // Store the login result so it can be retrieved in another
-    // browser tab by the result handler
-    OAuth._storePendingCredential(query.state, {
-      serviceName: service.serviceName,
-      serviceData: oauthResult.serviceData,
-      options: oauthResult.options
-    }, credentialSecret);
-  }
+function createOAuthBindings(server, urls) {
 
-  // Either close the window, redirect, or render nothing
-  // if all else fails
-  OAuth._renderOauthResults(res, query, credentialSecret);
-};
+  console.log('resistered', urls);
+
+  OAuth.registerService('drupal', 1, urls, function(oauthBinding) {
+    var identity = oauthBinding.post(server + '/oauthlogin/api/login/info').data;
+
+    var serviceData = {
+      id: identity.uid
+    };
+
+    // Include all whitelisted fields from Drupal.
+    var whitelisted = [];
+
+    var fields = _.pick(identity, whitelisted);
+    _.extend(serviceData, fields);
+
+    console.log(identity);
+
+    return {
+      serviceData: serviceData,
+      options: {
+        profile: {
+          name: identity.name
+        }
+      }
+    };
+  });
+}

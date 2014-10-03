@@ -1,4 +1,4 @@
-Drupal Services [![Build Status](https://travis-ci.org/EventedMind/iron-router.png)](https://travis-ci.org/EventedMind/iron-router)
+Drupal Services [![Build Status](https://travis-ci.org/timbrandin/meteor-drupal-services.png)](https://travis-ci.org/timbrandin/meteor-drupal-services)
 ============================
 
 A meteor package for integration with [Drupal](http://drupal.org) via the [Services](https://drupal.org/project/services) module, and authenticating using
@@ -24,10 +24,8 @@ A plus with the OAuth Login Provider is that it also gives us "OAuth Login" whic
 Install
 -----------
 ```
-mrt install drupal-services
+meteor add timbrandin:drupal-services
 ```
-
-```mrt``` is a Meteorite command line tool. Visit [Meteorite's page](http://oortcloud.github.com/meteorite/) to learn more.
 
 Getting started
 -----------------
