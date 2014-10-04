@@ -29,7 +29,6 @@ DrupalService.prototype = {
   _validate: function(settings) {
     // Warn about missing configuration.
     if (!settings.server && !DrupalService.ready) {
-      this.configured = false;
       PLog.warn("Drupal Service: Missing server or unconfigured login service");
       return false;
     }

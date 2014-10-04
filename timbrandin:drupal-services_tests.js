@@ -1,35 +1,49 @@
-testAsyncMulti('Drupal Services - Misconfigured service throws error.', [function(test, expect) {
+testAsyncMulti('Drupal Services - Misconfigured service logs warnings.', [function(test, expect) {
 
   Meteor.setTimeout(expect(function() {
-    test.throws(function() {
-      new DrupalService();
-    }, Error, 'Service did not throw error on missing server configuration.');
-  }), 1);
 
-  Meteor.setTimeout(expect(function() {
+    PLog._intercept(1);
+    new DrupalService();
+
+    intercepted = PLog._intercepted();
+    test.equal(intercepted.length, 1, 'Service does log on missing server configuration.');
+    PLog._rewind();
+
+
+    PLog._intercept(1);
     test.instanceOf(new DrupalService('api', {
       server: 'server',
       consumerKey: 'consumerKey',
       secret: 'secret'
-    }), Object, 'Service does not throw error when server configuration is added.');
-  }), 1);
+    }), Object, 'Service returns an object when server configuration is added.');
 
-  Meteor.setTimeout(expect(function() {
-    test.throws(function() {
-      new DrupalService(null, {
-        server: 'server',
-        consumerKey: 'consumerKey',
-        secret: 'secret'
-      });
-    }, Error, 'Service did not throw error on missing endpoint.');
-  }), 1);
+    intercepted = PLog._intercepted();
+    test.equal(intercepted.length, 0, 'Service does NOT log on added server endpoint.');
+    PLog._rewind();
 
-  Meteor.setTimeout(expect(function() {
+
+    PLog._intercept(1);
+    new DrupalService(null, {
+      server: 'server',
+      consumerKey: 'consumerKey',
+      secret: 'secret'
+    });
+
+    intercepted = PLog._intercepted();
+    test.equal(intercepted.length, 1, 'Service does log on missing server endpoint.');
+    PLog._rewind();
+
+
+    PLog._intercept(1);
     test.instanceOf(new DrupalService('api', {
       server: 'server',
       consumerKey: 'consumerKey',
       secret: 'secret'
-    }), Object, 'Service does not throw error when endpoint is added.');
+    }), Object, 'Service returns an object on correct endpoint.');
+
+    intercepted = PLog._intercepted();
+    test.equal(intercepted.length, 0, 'Service does NOT log on added server endpoint.');
+    PLog._rewind();
   }), 1);
 
   // Wait for configuration setup to return.
@@ -46,47 +60,21 @@ testAsyncMulti('Drupal Services - Misconfigured service throws error.', [functio
 
   Meteor.setTimeout(expect(function() {
 
-    new DrupalService('api');
+    PLog._intercept(1);
+    test.instanceOf(new DrupalService('api'), Object, 'Service returns an object on correct endpoint.');
 
-    // test.instanceOf(new DrupalService('api'), Object, 'Service does not throw error when server is added.');
-  }), 1);
+    intercepted = PLog._intercepted();
 
-  Meteor.setTimeout(expect(function() {
-    test.throws(function() {
-      new DrupalService();
-    }, Error, 'Service did not throw error on missing endpoint.');
-  }), 1);
+    test.equal(intercepted.length, 0, 'Service does NOT log on added server endpoint.');
+    PLog._rewind();
 
-  Meteor.setTimeout(expect(function() {
-    var server = new DrupalService('api');
 
-    var nodes = server.get('node');
+    PLog._intercept(1);
+    new DrupalService();
 
-    // var config = ServiceConfiguration.configurations.findOne({service: 'drupal'});
-    //
-    // test.equal(typeof config, 'object', 'Configuration was not a object as expected.');
-    // test.equal(typeof config.server, 'string', 'Server was not a string as expected.');
-    //
-    // test.throws(function() {
-    //   DrupalServices.get();
-    // }, Error, 'Service does not throw on missing access-token.');
-    //
-    // test.throws(function() {
-    //   DrupalServices.create();
-    // }, Error, 'Service does not throw on missing access-token.');
-    //
-    // test.throws(function() {
-    //   DrupalServices.update();
-    // }, Error, 'Service does not throw on missing access-token.');
-    //
-    // test.throws(function() {
-    //   DrupalServices.delete();
-    // }, Error, 'Service does not throw on missing access-token.');
-    //
-    // test.throws(function() {
-    //   DrupalServices.action();
-    // }, Error, 'Service does not throw on missing access-token.');
-
+    intercepted = PLog._intercepted();
+    test.equal(intercepted.length, 1, 'Service does log on missing server endpoint.');
+    PLog._rewind();
   }), 1);
 
   // Clear away test data.

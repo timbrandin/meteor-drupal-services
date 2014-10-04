@@ -158,11 +158,11 @@
     ],
     [
       "timbrandin:oauth1-for-apis",
-      "1.0.1"
+      "1.0.0"
     ],
     [
       "timbrandin:package-logging",
-      "1.0.2"
+      "1.0.3"
     ],
     [
       "tracker",

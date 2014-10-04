@@ -36,9 +36,9 @@ if (Meteor.isServer) {
 Features
 -----------------
 
-* **OAuth 2-step consumer requests** to resources configured with the Services module.
-* **OAuth 3-step login procedure** to _any Drupal site_ configured with the OAuth Login Service.
-* **Signed (HMAC-SHA1) requests** to a configured services in the Services module in any Drupal site.
+* **Open API requests** to public resources configured with the Services module.
+* **OAuth 3-step login procedure** to _any Drupal site_ configured with the OAuth Login Service and using the [_accounts-drupal_ package](http://github.com/timbrandin/meteor-accounts-drupal).
+* **Signed API (HMAC-SHA1) requests** to a configured services in the Services module in any Drupal site.
 
 #### Roadmap
 
@@ -47,6 +47,8 @@ Feel free to fork, send pull requests and post issues on Github.
 * **DONE** Refactor package to use [OAuth1Binding](https://github.com/meteor/meteor/blob/devel/packages/oauth1/oauth1_binding.js).
 * **DONE** Using the package to access open resources without any authorization.
 * **DONE** Multiple services, connecting to multiple Drupal sites.
-* API documentation.
-* Configurable authorization.
+* **DONE** API documentation.
+* **DONE** Automatic authorization selection.
+* **DONE** Some simple basic testing.
+* Configurable authorization (and enable usage of Basic auth).
 * Drupal 8 integration.
