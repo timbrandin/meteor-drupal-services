@@ -10,8 +10,10 @@ Install
 meteor add timbrandin:drupal-services
 ```
 
-Getting started
+[Getting started](DOCS.md)
 -----------------
+
+[Read the documentation](DOCS.md)
 
 Here are some quick instructions on how to use this package to fetch data from Drupal such as nodes, terms, users etc.
 
