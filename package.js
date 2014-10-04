@@ -8,12 +8,11 @@ Package.on_use(function (api, where) {
   api.versionsFrom("METEOR@0.9.0");
   api.use('http', ['client', 'server']);
   api.use('templating', 'client');
-  api.use('timbrandin:oauth1-for-apis', ['client', 'server']);
+  api.use('timbrandin:oauth1-for-apis@1.0.1', ['client', 'server']);
   api.use('oauth', ['client', 'server']);
   api.use('random', 'client');
   api.use('underscore', 'client');
   api.use('service-configuration', ['client', 'server']);
-  api.use('base64', 'server');
 
   api.use('timbrandin:package-logging@1.0.4', 'server');
 
