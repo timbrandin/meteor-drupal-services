@@ -1,25 +1,8 @@
 Drupal Services [![Build Status](https://travis-ci.org/timbrandin/meteor-drupal-services.png)](https://travis-ci.org/timbrandin/meteor-drupal-services)
 ============================
 
-A meteor package for integration with [Drupal](http://drupal.org) via the [Services](https://drupal.org/project/services) module, and authenticating using
-the OAuth module.
-
-Package Dependencies
-----------------------
-
-* accounts-base
-* accounts-oauth
-
-Drupal Dependencies
-----------------------
-
-* [Services](https://drupal.org/project/services) 7.x-3.7
-* [OAuth](https://drupal.org/project/oauth) 7.x-3.2
-* [OAuth Login Provider](https://drupal.org/project/oauthloginprovider) 7.x-1.1
-
-Currently the OAuth module does not provide a way to determine who is the authorizing user, that's why we need the OAuth Login Provider.
-
-A plus with the OAuth Login Provider is that it also gives us "OAuth Login" which is an OAuth Context that is necessary in all cases using the OAuth module.
+A servers side package for integrating with [Drupal](http://drupal.org) via the [Services](https://drupal.org/project/services) module, and authenticating using
+the [OAuth](https://drupal.org/project/oauth) module.
 
 Install
 -----------
@@ -32,56 +15,38 @@ Getting started
 
 Here are some quick instructions on how to use this package to fetch data from Drupal such as nodes, terms, users etc.
 
-### Requirements for your service endpoints
-
-Which you create yourself in the Services UI.
-
-* Server needs to be able to handle both
-  * application/json
-  * application/x-www-form-urlencoded
-* Authentication currently needs:
-  * OAuth Login - as your OAuth Context which is the same as the one your using to authorize your Meteor application for logging in.
-  * Default required authentication needs to be 3-legged, haven't tested with anything else yet.
-
 ### Code examples
 
-Some typical service call looks like this, they are called from the server and it is currently synchronous, but you could put it in a fiber or use unblock to send them async I guess.
+Some typical service call looks like this, they are called from the server.
 
 ```js
 if (Meteor.isServer) {
+  MySite = new DrupalServices('api');
+
   // Fetch nodes with node-id 1 and 2.
-  var nodes = DrupalService.get('api', 'node', {
+  var nodes = MySite.get('node', {
     'parameters[nid]': '1,2'
   });
 
   // Fetch node 1 with all its fields.
-  var node = DrupalServices.get('api', 'node/1');
+  var node = MySite.get('node/1');
 }
 ```
 
 Features
 -----------------
 
-* **OAuth 3-step login procedure** to any Drupal site with Drupal OAuth configured.
-* **Signed (HMAC-SHA256) requests** to a configured services in the Services module in any Drupal site.
-
-#### What's next, in a very near future
-
-* Improved error messages.
-* Better documentation.
+* **OAuth 2-step consumer requests** to resources configured with the Services module.
+* **OAuth 3-step login procedure** to _any Drupal site_ configured with the OAuth Login Service.
+* **Signed (HMAC-SHA1) requests** to a configured services in the Services module in any Drupal site.
 
 #### Roadmap
 
 Feel free to fork, send pull requests and post issues on Github.
 
-* Refactoring the package into two new packages where on is using OAuth1Binding.
-* Using the package to access open resources without any authorization.
+* **DONE** Refactor package to use [OAuth1Binding](https://github.com/meteor/meteor/blob/devel/packages/oauth1/oauth1_binding.js).
+* **DONE** Using the package to access open resources without any authorization.
+* **DONE** Multiple services, connecting to multiple Drupal sites.
+* API documentation.
 * Configurable authorization.
-* Multiple services, connecting to multiple Drupal sites.
-* Drupal Sync module that keeps a collection in sync with a configured resource.
 * Drupal 8 integration.
-
-#### This package also works great with these modules
-
-* [Services Entity API](https://drupal.org/project/services_entity) 7.x-2.0-alpha7
-* [Services Views](https://drupal.org/project/services_views) 7.x-1.0
