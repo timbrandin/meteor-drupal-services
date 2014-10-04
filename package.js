@@ -1,6 +1,6 @@
 Package.describe({
   summary: "An integration with the Drupal Services module",
-  version: "1.0.1",
+  version: "1.0.2",
   git: "https://github.com/timbrandin/meteor-drupal-services.git"
 });
 
@@ -15,7 +15,7 @@ Package.on_use(function (api, where) {
   api.use('service-configuration', ['client', 'server']);
   api.use('base64', 'server');
 
-  api.use('timbrandin:package-logging@1.0.3', 'server');
+  api.use('timbrandin:package-logging@1.0.4', 'server');
 
   api.export('DrupalService');
 
@@ -29,7 +29,7 @@ Package.on_use(function (api, where) {
 
 Package.on_test(function (api) {
   api.use(['tinytest', 'underscore', 'service-configuration', 'test-helpers'], 'server');
-  api.use('timbrandin:package-logging@1.0.3', 'server');
+  api.use('timbrandin:package-logging@1.0.4', 'server');
   api.use('timbrandin:drupal-services', ['client', 'server']);
 
   api.add_files('timbrandin:drupal-services_tests.js', 'server');
