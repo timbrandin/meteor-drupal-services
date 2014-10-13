@@ -20,6 +20,16 @@ DrupalService = function(endpoint, options) {
     if (config) {
       _.extend(self, config);
     }
+    else {
+      // If Drupal wasn't already configured, wait for new configuration settings.
+      ServiceConfiguration.configurations.find({service: 'drupal'}).observe({
+        added: function(config) {
+          if (!self.server) {
+            _.extend(self, config);
+          }
+        }
+      });
+    }
   };
 };
 
