@@ -1,6 +1,6 @@
 Package.describe({
   summary: "An integration with the Drupal Services module",
-  version: "1.0.3",
+  version: "1.0.4",
   git: "https://github.com/timbrandin/meteor-drupal-services.git"
 });
 
