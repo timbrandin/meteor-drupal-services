@@ -1,7 +1,7 @@
 Drupal Services [![Build Status](https://travis-ci.org/timbrandin/meteor-drupal-services.png)](https://travis-ci.org/timbrandin/meteor-drupal-services)
 ============================
 
-A servers side package for integrating with [Drupal](http://drupal.org) via the [Services](https://drupal.org/project/services) module, and authenticating using
+A server side package for integrating with [Drupal](http://drupal.org) via the [Services](https://drupal.org/project/services) module, and authenticating using
 the [OAuth](https://drupal.org/project/oauth) module.
 
 Install
